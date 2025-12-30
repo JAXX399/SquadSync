@@ -1,0 +1,17 @@
+/* App-specific styles can go here, but we'll try to use global utilities */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-md);
+}
