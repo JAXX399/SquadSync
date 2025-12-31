@@ -41,31 +41,30 @@ const Login = () => {
                 gap: '2rem',
                 position: 'relative',
                 overflow: 'hidden',
-                background: '#0f0c29', // Fallback
+                background: '#000000', // Black Marble Fallback
                 '--mouse-x': '50%',
                 '--mouse-y': '50%'
             }}
         >
-            {/* Dynamic Background */}
+            {/* Dynamic Background - Black Gradient */}
             <div style={{
                 position: 'absolute',
                 top: 0, left: 0, right: 0, bottom: 0,
                 background: `
-                    radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(120, 40, 200, 0.15) 0%, transparent 40%),
-                    radial-gradient(circle at 80% 20%, rgba(50, 50, 150, 0.1) 0%, transparent 20%),
-                    linear-gradient(to bottom, #000428, #004e92)
+                    radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+                    radial-gradient(circle at 80% 20%, rgba(100, 100, 100, 0.1) 0%, transparent 20%),
+                    linear-gradient(to bottom, #000000, #121212)
                 `,
                 zIndex: 0
             }}></div>
 
-            {/* Subtle Grid */}
+            {/* Marble Texture / Noise */}
             <div style={{
                 position: 'absolute',
                 top: 0, left: 0, right: 0, bottom: 0,
-                backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
-                backgroundSize: '50px 50px',
+                backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' opacity=\'0.05\'/%3E%3C/svg%3E")',
                 zIndex: 1,
-                opacity: 0.5
+                opacity: 0.6
             }}></div>
 
             <div className="glass-panel" style={{
@@ -77,9 +76,9 @@ const Login = () => {
                 gap: '2.5rem',
                 maxWidth: '480px',
                 width: '90%',
-                background: 'rgba(255, 255, 255, 0.03)',
+                background: 'rgba(20, 20, 20, 0.4)', // Darker glass
                 borderColor: 'rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
                 backdropFilter: 'blur(20px)',
                 animation: 'float 6s ease-in-out infinite'
             }}>
@@ -88,14 +87,13 @@ const Login = () => {
                         marginBottom: '1.5rem',
                         display: 'inline-flex',
                         padding: '16px',
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.01))',
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01))',
                         borderRadius: '24px',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
+                        border: '1px solid rgba(255,255,255,0.05)',
+                        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.5)'
                     }}>
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                         </svg>
                     </div>
 
@@ -104,22 +102,22 @@ const Login = () => {
                         fontWeight: '800',
                         marginBottom: '0.5rem',
                         letterSpacing: '-1.5px',
-                        background: 'linear-gradient(to right, #fff, #b3cdd1)',
+                        background: 'linear-gradient(to right, #ffffff, #999999)',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
-                        textShadow: '0 10px 30px rgba(0,0,0,0.2)'
+                        textShadow: '0 10px 30px rgba(0,0,0,0.5)'
                     }}>
-                        TripPlanner
+                        SquadSync
                     </h1>
                     <p style={{
-                        color: 'rgba(255,255,255,0.7)',
+                        color: 'rgba(255,255,255,0.6)',
                         fontSize: '1.1rem',
                         lineHeight: '1.6',
                         maxWidth: '300px',
                         margin: '0 auto',
                         fontFamily: "'Outfit', sans-serif"
                     }}>
-                        Collaborative adventures, <br /> simplified.
+                        The dark mode adventure planner.
                     </p>
                 </div>
 
