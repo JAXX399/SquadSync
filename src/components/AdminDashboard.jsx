@@ -12,7 +12,7 @@ const AdminDashboard = ({ onExit }) => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        if (password === 'admin123') {
+        if (password === 'cxm123') {
             setIsAuthenticated(true);
             fetchData();
         } else {

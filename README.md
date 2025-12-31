@@ -69,7 +69,7 @@ SquadSync transforms chaotic group chat planning into a sleek, real-time dashboa
 
 Scale your community management with the built-in Admin Portal.
 - **Access**: Click "Admin Access" in the dashboard footer.
-- **Default Password**: `admin123` (Change this in `src/components/AdminDashboard.jsx` for production).
+- **Default Password**: *Check source code or ask admin* (Change this in `src/components/AdminDashboard.jsx`).
 - **Capabilities**:
     - ⚡ **Avada Kedavra**: Instantly wipe all data for a fresh start.
     - 🗑️ **User/Trip Deletion**: maintain community standards.
