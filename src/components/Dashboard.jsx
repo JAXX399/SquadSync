@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
-import { collection, query, where, onSnapshot, addDoc, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, addDoc, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 
 const Dashboard = ({ user, onSelectTrip, onAdminClick }) => {
     const [trips, setTrips] = useState([]);
     const [invites, setInvites] = useState([]);
     const [isCreating, setIsCreating] = useState(false);
+    const [isJoining, setIsJoining] = useState(false);
     const [newTripName, setNewTripName] = useState('');
+    const [joinTripId, setJoinTripId] = useState('');
 
     // 1. Fetch My Trips
     useEffect(() => {
@@ -47,6 +49,45 @@ const Dashboard = ({ user, onSelectTrip, onAdminClick }) => {
         }
     };
 
+    const handleJoinTrip = async (e) => {
+        e.preventDefault();
+        const tid = joinTripId.trim();
+        if (!tid) return;
+
+        try {
+            // Check if trip exists
+            const tripRef = doc(db, "trips", tid);
+            const tripSnap = await getDoc(tripRef);
+
+            if (!tripSnap.exists()) {
+                alert("Trip not found! Please check the ID.");
+                return;
+            }
+
+            const tripData = tripSnap.data();
+            if (tripData.members.includes(user.uid)) {
+                alert("You are already a member of this trip!");
+                return;
+            }
+
+            // Add user to trip
+            await updateDoc(tripRef, {
+                members: arrayUnion(user.uid)
+            });
+
+            // Cleanup: Remove any pending invites for this trip if they exist (optional polish)
+            // For now just basic join is fine.
+
+            setIsJoining(false);
+            setJoinTripId('');
+            alert(`Success! You joined ${tripData.name}`);
+
+        } catch (error) {
+            console.error(error);
+            alert("Error joining trip: " + error.message);
+        }
+    };
+
     const handleAcceptInvite = async (invite) => {
         try {
             const tripRef = doc(db, "trips", invite.tripId);
@@ -57,10 +98,15 @@ const Dashboard = ({ user, onSelectTrip, onAdminClick }) => {
 
     const copyUserId = () => {
         navigator.clipboard.writeText(user.uid);
-        // Could add a toast here instead of alert for polish
         const btn = document.getElementById('copy-btn');
         if (btn) btn.innerText = "Copied!";
         setTimeout(() => { if (btn) btn.innerText = "Copy"; }, 2000);
+    };
+
+    const copyTripId = (e, tripId) => {
+        e.stopPropagation(); // Prevent opening the trip
+        navigator.clipboard.writeText(tripId);
+        alert("Trip ID copied! Share this with friends so they can join.");
     };
 
     return (
@@ -135,7 +181,14 @@ const Dashboard = ({ user, onSelectTrip, onAdminClick }) => {
             {/* Trips Section */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <h3 style={{ fontSize: '1.8rem', fontWeight: '400' }}>Your Adventures</h3>
-                <button className="btn-primary" onClick={() => setIsCreating(true)} style={{ padding: '12px 24px', borderRadius: '12px', fontSize: '1rem' }}>+ Create New Trip</button>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button className="btn-icon" onClick={() => { setIsJoining(!isJoining); setIsCreating(false); }} style={{ padding: '12px 24px', borderRadius: '12px', fontSize: '1rem', border: '1px solid var(--glass-border)' }}>
+                        🔗 Join via ID
+                    </button>
+                    <button className="btn-primary" onClick={() => { setIsCreating(true); setIsJoining(false); }} style={{ padding: '12px 24px', borderRadius: '12px', fontSize: '1rem' }}>
+                        + Create New Trip
+                    </button>
+                </div>
             </div>
 
             {isCreating && (
@@ -153,12 +206,27 @@ const Dashboard = ({ user, onSelectTrip, onAdminClick }) => {
                 </div>
             )}
 
+            {isJoining && (
+                <div className="glass-panel" style={{ padding: '2rem', marginBottom: '3rem', display: 'flex', gap: '1rem', alignItems: 'center', animation: 'slideIn 0.3s ease', border: '1px solid var(--text-accent)' }}>
+                    <input
+                        type="text"
+                        placeholder="Enter Trip ID (Ask the host)"
+                        value={joinTripId}
+                        onChange={(e) => setJoinTripId(e.target.value)}
+                        autoFocus
+                        style={{ flex: 1, padding: '1rem', fontSize: '1.1rem', background: 'rgba(0,0,0,0.2)', border: 'none', borderRadius: '8px', color: 'white' }}
+                    />
+                    <button className="btn-primary" onClick={handleJoinTrip} style={{ padding: '1rem 2rem' }}>Join Trip</button>
+                    <button className="btn-icon" onClick={() => setIsJoining(false)} style={{ padding: '1rem' }}>Cancel</button>
+                </div>
+            )}
+
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
                 {trips.length === 0 ? (
                     <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '5rem', border: '2px dashed var(--glass-border)', borderRadius: 'var(--radius-lg)', color: 'var(--text-secondary)' }}>
                         <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🌍</div>
                         <p style={{ fontSize: '1.2rem' }}>No trips yet.</p>
-                        <p>Start a new adventure or wait for an invite!</p>
+                        <p>Start a new adventure, join a friend, or wait for an invite!</p>
                     </div>
                 ) : (
                     trips.map((trip, idx) => (
@@ -188,7 +256,27 @@ const Dashboard = ({ user, onSelectTrip, onAdminClick }) => {
                                 opacity: 0.3
                             }}></div>
 
-                            <h4 style={{ fontSize: '1.6rem', marginBottom: '0.5rem', position: 'relative' }}>{trip.name}</h4>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <h4 style={{ fontSize: '1.6rem', marginBottom: '0.5rem', position: 'relative' }}>{trip.name}</h4>
+                                <button
+                                    onClick={(e) => copyTripId(e, trip.id)}
+                                    title="Copy Trip ID"
+                                    className="btn-icon"
+                                    style={{
+                                        padding: '8px', /* Larger padding */
+                                        fontSize: '1.2rem',
+                                        background: 'rgba(255,255,255,0.1)',
+                                        borderRadius: '8px',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        position: 'relative', /* Fix stacking context */
+                                        zIndex: 20 /* Ensure it is above the card link */
+                                    }}
+                                >
+                                    🔗
+                                </button>
+                            </div>
+
                             <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#4ade80' }}></span>
                                 {trip.members.length} Traveler{trip.members.length !== 1 ? 's' : ''}

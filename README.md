@@ -12,7 +12,7 @@ SquadSync transforms chaotic group chat planning into a sleek, real-time dashboa
 
 - **Real-Time Availability Sync**: Mark yourself as "Free" or "Busy" for specific dates. Updates appear instantly for everyone.
 - **Group Trip Management**: Organize multiple trips (Goa 2026, Family Reunion, etc.) with isolated calendars.
-- **Invitation System**: Invite friends securely using their unique User ID.
+- **Invites & Joining**: Invite friends securely via User ID or share a **Trip ID** for instant access.
 - **Admin Dashboard**: Powerful control panel to manage users, trips, and perform system-wide resets.
 - **Google Authentication**: fast and secure sign-in with your existing Google account.
 - **Glassmorphism UI**: A premium, modern interface designed for a delightful user experience.
